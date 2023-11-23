@@ -1,0 +1,20 @@
+# Node
+node_modules/
+npm-debug.log
+npm-error.log
+
+# Environment variables
+.env
+
+# Production build files
+/dist
+/build
+
+# TypeScript
+*.tsbuildinfo
+
+# IDEs and editors
+.idea
+*.swp
+.vscode
+.DS_Store
