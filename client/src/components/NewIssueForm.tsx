@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './NewIssueForm.css';
+
 
 const NewIssueForm: React.FC = () => {
   const [title, setTitle] = useState('');

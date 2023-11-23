@@ -1,0 +1,14 @@
+.issue-detail-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.issue-detail-container h2 {
+  color: #333;
+}
+
+.issue-detail-container p {
+  color: #666;
+  line-height: 1.6;
+}

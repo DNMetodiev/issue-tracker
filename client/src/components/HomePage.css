@@ -1,0 +1,75 @@
+.homepage-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.issue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin-top: 20px;
+}
+
+.issue-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 200px; /* Fixed height for all boxes */
+  overflow: hidden;
+}
+
+.issue-box h3 {
+  font-size: 1em;
+  margin: 0 0 10px 0;
+}
+
+.issue-box .description {
+  flex-grow: 1;
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to three lines */
+  -webkit-box-orient: vertical;
+}
+
+.read-more {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.add-new-issue {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.add-new-issue-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.add-new-issue-button:hover {
+  background-color: #0056b3;
+}
+
+.details-link {
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: auto; /* Aligns the link to the bottom of the flex container */
+}
