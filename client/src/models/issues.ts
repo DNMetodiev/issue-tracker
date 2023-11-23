@@ -1,11 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import NewIssueModal from './NewIssueModal';
-// import './IssueList.css';
-import './HomePage.css';
+import { Issue } from './interfaces';
 
-// Dummy data array
-const issues = [
+export const dummyIssues: Issue[] = [
   {
     id: '1',
     title: 'Login Issue',
@@ -67,44 +62,3 @@ const issues = [
     status: 'Closed'
   }
 ];
-
-const IssueList: React.FC = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState(null);
-
-  const toggleModal = () => setModalOpen(!modalOpen);
-
-  const handleReadMore = (issue) => {
-    setSelectedIssue(issue);
-    toggleModal();
-  };
-
-  return (
-    <div className="homepage-container">
-      {issues.length > 0 ? (
-        <div className="issue-grid">
-          {issues.map(issue => (
-            <div key={issue.id} className="issue-box">
-              <h3>{issue.title}</h3>
-              <div className="description">
-                {issue.description}
-                {issue.description.length > 100 && (
-                  <span className="read-more" onClick={() => handleReadMore(issue)}>..read more</span>
-                )}
-              </div>
-              <Link to={`/issue/${issue.id}`} className="details-link">View Details</Link>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="add-new-issue">
-          <p>No issues found. Would you like to create one?</p>
-          <button onClick={toggleModal} className="add-new-issue-button">Add New Issue</button>
-        </div>
-      )}
-      {modalOpen && <NewIssueModal issue={selectedIssue} onClose={toggleModal} />}
-    </div>
-  );
-};
-
-export default IssueList;

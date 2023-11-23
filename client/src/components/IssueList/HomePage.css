@@ -35,7 +35,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limit to three lines */
+  -webkit-line-clamp: 3; 
   -webkit-box-orient: vertical;
 }
 
@@ -71,5 +71,5 @@
   text-decoration: none;
   border-radius: 4px;
   text-align: center;
-  margin-top: auto; /* Aligns the link to the bottom of the flex container */
+  margin-top: auto;
 }

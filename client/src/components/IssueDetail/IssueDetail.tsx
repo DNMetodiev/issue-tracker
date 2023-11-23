@@ -1,16 +1,10 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
+import { dummyIssues } from '../../models/issues';
 import './IssueDetail.css';
 
-
-const issues: Issue[] = [
-
-];
-
 const IssueDetail: React.FC = () => {
-  const { id } = useParams();
-  const issue = issues.find(issue => issue.id === id);
-
+  const { id } = useParams<{ id: string }>();
+  const issue = dummyIssues.find(issue => issue.id === id);
   if (!issue) {
     return <div>Issue not found</div>;
   }
