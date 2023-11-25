@@ -1,39 +1,45 @@
 .new-issue-form-container {
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
-}
-
-.new-issue-form-container h1 {
-  text-align: center;
-}
-
-.new-issue-form-container form {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.new-issue-form-container label {
+.new-issue-form {
+  width: 100%;
+  max-width: 500px; 
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
   margin-bottom: 5px;
 }
 
-.new-issue-form-container input,
-.new-issue-form-container textarea {
+.form-group input,
+.form-group textarea {
+  width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.new-issue-form-container button {
+.create-button {
+  width: 100%;
   padding: 10px;
+  background-color: #007bff;
+  color: white;
   border: none;
   border-radius: 4px;
-  background-color: #28a745;
-  color: white;
   cursor: pointer;
 }
 
-.new-issue-form-container button:hover {
-  background-color: #218838;
+.create-button:hover {
+  background-color: #0056b3;
 }
