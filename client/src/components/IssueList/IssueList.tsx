@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Issue } from '../../models/interfaces';
 import { dummyIssues } from '../../models/issues';
-import NewIssueModal from '../NewIssueModal/NewIssueModal';
 import './HomePage.css';
+import IssueDetailModal from '../NewIssueModal/IssueDetailModal';
 
 const IssueList: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,16 +20,12 @@ const IssueList: React.FC = () => {
       {dummyIssues.length > 0 ? (
         <div className="issue-grid">
           {dummyIssues.map(issue => (
-            <div key={issue.id} className="issue-box">
+            <div key={issue.id} className="issue-box" onClick={() => handleReadMore(issue)}>
               <h3>{issue.title}</h3>
               <div className="description">
-                {issue.description.length > 100 ? (
-                  <>
-                    {issue.description.substring(0, 97)}...
-                    <span className="read-more" onClick={() => handleReadMore(issue)}>read more</span>
-                  </>
-                ) : (
-                  issue.description
+                {issue.description.substring(0, 100)}
+                {issue.description.length > 100 && (
+                  <span className="read-more">... read more</span>
                 )}
               </div>
             </div>
@@ -38,7 +34,9 @@ const IssueList: React.FC = () => {
       ) : (
         <div className="no-issues">No issues found. Would you like to create one?</div>
       )}
-      {modalOpen && selectedIssue && <NewIssueModal issue={selectedIssue} onClose={toggleModal} />}
+      {modalOpen && selectedIssue && (
+        <IssueDetailModal issue={selectedIssue} onClose={toggleModal} />
+      )}
     </div>
   );
 };
