@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
-import { Issue } from '../../models/interfaces';
-import { dummyIssues } from '../../models/issues';
-import './HomePage.css';
+import React, { useState, useEffect } from 'react';
+import { getIssues, deleteIssue } from '../../services/issueService.js';
 import IssueDetailModal from '../NewIssueModal/IssueDetailModal';
+import { Issue } from '../../models/interfaces';
+import './HomePage.css';
 
 const IssueList: React.FC = () => {
+  const [issues, setIssues] = useState<Issue[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        const fetchedIssues = await getIssues();
+        setIssues(fetchedIssues);
+      } catch (error) {
+        console.error('Error fetching issues:', error);
+      }
+    };
+
+    fetchIssues();
+  }, []);
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
@@ -15,19 +29,25 @@ const IssueList: React.FC = () => {
     toggleModal();
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteIssue(id);
+      setIssues(issues.filter((issue) => issue.id !== id));
+    } catch (error) {
+      console.error('Error deleting issue:', error);
+    }
+  };
+
   return (
     <div className="issue-list-container">
-      {dummyIssues.length > 0 ? (
+      {issues.length > 0 ? (
         <div className="issue-grid">
-          {dummyIssues.map(issue => (
-            <div key={issue.id} className="issue-box" onClick={() => handleReadMore(issue)}>
+          {issues.map((issue) => (
+            <div key={issue.id} className="issue-box">
               <h3>{issue.title}</h3>
-              <div className="description">
-                {issue.description.substring(0, 100)}
-                {issue.description.length > 100 && (
-                  <span className="read-more">... read more</span>
-                )}
-              </div>
+              <p className="description">{issue.description}</p>
+              <button onClick={() => handleReadMore(issue)}>Read More</button>
+              <button onClick={() => handleDelete(issue.id)}>Delete</button>
             </div>
           ))}
         </div>

@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
-import { Issue } from '../../models/interfaces';
+import { createIssue } from '../../services/issueService';
 import './NewIssueForm.css';
 
-type NewIssueFormProps = {
-  onCreate: (issue: Issue) => void;
-};
-
-const NewIssueForm: React.FC<NewIssueFormProps> = ({ onCreate }) => {
+const NewIssueForm: React.FC = () => {
   const [caseId, setCaseId] = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const newIssue: Issue = {
-      id: Math.random().toString(36).substring(2, 9),
-      caseId: caseId,
-      title: `Issue #${caseId}`,
-      description: description,
-      status: 'Open'
-    };
-
-    console.log('Creating issue:', newIssue);
-    onCreate(newIssue);
-    setCaseId('');
-    setDescription('');
+    try {
+      const issueData = {
+        caseId: caseId,
+        title: title,
+        description: description,
+        status: 'Open',
+      };
+      const newIssue = await createIssue(issueData);
+      console.log('Issue created:', newIssue);
+      setCaseId('');
+      setTitle('');
+      setDescription('');
+    } catch (error) {
+      console.error('Error creating issue:', error);
+    }
   };
 
   return (
@@ -35,16 +35,26 @@ const NewIssueForm: React.FC<NewIssueFormProps> = ({ onCreate }) => {
             id="caseId"
             type="text"
             value={caseId}
-            onChange={e => setCaseId(e.target.value)}
+            onChange={(e) => setCaseId(e.target.value)}
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="description">Initial Description:</label>
+          <label htmlFor="title">Title:</label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="description">Description:</label>
           <textarea
             id="description"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
