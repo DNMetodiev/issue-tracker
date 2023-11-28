@@ -1,62 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { getIssues, deleteIssue } from '../../services/issueService.js';
-import IssueDetailModal from '../NewIssueModal/IssueDetailModal';
-import { Issue } from '../../models/interfaces';
-import './HomePage.css';
+import { getIssues } from '../../services/issueService';
+import Table from '../Table/Table';
+import NavBar from '../NavBar/NavBar';
+import { Incident } from '../../models/interfaces';
 
 const IssueList: React.FC = () => {
-  const [issues, setIssues] = useState<Issue[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
 
   useEffect(() => {
-    const fetchIssues = async () => {
+    const fetchIncidents = async () => {
       try {
-        const fetchedIssues = await getIssues();
-        setIssues(fetchedIssues);
+        const fetchedIncidents = await getIssues();
+        setIncidents(fetchedIncidents as Incident[]);
       } catch (error) {
-        console.error('Error fetching issues:', error);
+        console.error('Failed to fetch incidents:', error);
       }
     };
 
-    fetchIssues();
+    fetchIncidents();
   }, []);
 
-  const toggleModal = () => setModalOpen(!modalOpen);
-
-  const handleReadMore = (issue: Issue) => {
-    setSelectedIssue(issue);
-    toggleModal();
+  const handleSearch = (query: string) => {
+    // TODO: Implement search functionality
+    console.log('Search query:', query);
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteIssue(id);
-      setIssues(issues.filter((issue) => issue.id !== id));
-    } catch (error) {
-      console.error('Error deleting issue:', error);
-    }
+  const handleNewIssue = () => {
+    // TODO: Implement new issue functionality
+    console.log('Handle new issue');
   };
+
+  const ongoingIncidents = incidents.filter((incident) => incident.status === 'Ongoing');
+  const historicalIncidents = incidents.filter((incident) => incident.status === 'Historical');
 
   return (
-    <div className="issue-list-container">
-      {issues.length > 0 ? (
-        <div className="issue-grid">
-          {issues.map((issue) => (
-            <div key={issue.id} className="issue-box">
-              <h3>{issue.title}</h3>
-              <p className="description">{issue.description}</p>
-              <button onClick={() => handleReadMore(issue)}>Read More</button>
-              <button onClick={() => handleDelete(issue.id)}>Delete</button>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="no-issues">No issues found. Would you like to create one?</div>
-      )}
-      {modalOpen && selectedIssue && (
-        <IssueDetailModal issue={selectedIssue} onClose={toggleModal} />
-      )}
+    <div className="issue-list-page">
+      <NavBar onSearch={handleSearch} onNewIssue={handleNewIssue} />
+      <Table incidents={ongoingIncidents} title="Ongoing Incidents" />
+      <Table incidents={historicalIncidents} title="Historical Incidents" />
     </div>
   );
 };

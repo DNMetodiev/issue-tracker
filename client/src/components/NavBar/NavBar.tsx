@@ -1,23 +1,20 @@
-// import React from 'react';
+import React from 'react';
+import SearchBar from '../SearchBar/SearchBar';
 import './NavBar.css';
 
-type NavBarProps = {
-  onNewIssueClick: () => void;
-};
+interface NavBarProps {
+  onSearch: (query: string) => void;
+  onNewIssue: () => void;
+}
 
-const NavBar: React.FC<NavBarProps> = ({ onNewIssueClick }) => {
+const NavBar: React.FC<NavBarProps> = ({ onSearch, onNewIssue }) => {
   return (
-    <nav className="navbar">
-      <div className="logo">Logo</div>
-      <div className="nav-items">
-        <button onClick={onNewIssueClick}>New Issue</button>
-        <button>Past Issues</button>
-        <input type="text" placeholder="Search..." />
-      </div>
-    </nav>
+    <div className="navbar">
+      <div className="logo">Issue Tracker</div>
+      <SearchBar onSearch={onSearch} />
+      <button className="new-issue-btn" onClick={onNewIssue}>New Issue</button>
+    </div>
   );
 };
 
 export default NavBar;
-//THiS IS A COMMENT TO TEST GITHUB
-//SECOND TEST 
