@@ -1,44 +1,40 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { createIssue } from '../../services/issueService';
+import { Issue } from '../../models/interfaces';
 import './NewIssueForm.css';
 
-const NewIssueForm: React.FC = () => {
-  const [caseId, setCaseId] = useState('');
+interface NewIssueFormProps {
+  onCreate: (issue: Issue) => void;
+}
+
+const NewIssueForm: React.FC<NewIssueFormProps> = ({ onCreate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const issueData: Issue = {
+      caseId: uuidv4(),
+      title,
+      description,
+      status: 'Open',
+    };
+
     try {
-      const issueData = {
-        caseId: caseId,
-        title: title,
-        description: description,
-        status: 'Open',
-      };
       const newIssue = await createIssue(issueData);
       console.log('Issue created:', newIssue);
-      setCaseId('');
+      onCreate(newIssue);
       setTitle('');
       setDescription('');
     } catch (error) {
-      console.error('Error creating issue:', error);
+      console.log('not created')
     }
   };
 
   return (
     <div className="new-issue-form-container">
       <form onSubmit={handleSubmit} className="new-issue-form">
-        <div className="form-group">
-          <label htmlFor="caseId">Case ID:</label>
-          <input
-            id="caseId"
-            type="text"
-            value={caseId}
-            onChange={(e) => setCaseId(e.target.value)}
-            required
-          />
-        </div>
         <div className="form-group">
           <label htmlFor="title">Title:</label>
           <input
@@ -58,7 +54,7 @@ const NewIssueForm: React.FC = () => {
             required
           />
         </div>
-        <button type="submit" className="create-button">Create</button>
+        <button type="submit" className="create-button">Create Issue</button>
       </form>
     </div>
   );

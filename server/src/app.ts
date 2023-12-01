@@ -4,7 +4,8 @@ dotenv.config();
 import express, { Request, Response, NextFunction, Application } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import Issue, { IIssue } from './models/Issue';
+import Issue from './models/Issue';
+
 const app: Application = express();
 const PORT: number | string = process.env.PORT || 5000;
 
@@ -15,13 +16,19 @@ mongoose.connect(process.env.MONGO_URI as string)
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
-app.post('/api/issues', async (req: Request, res: Response) => {
+app.post('/api/issues', async (req, res) => {
   const issue = new Issue(req.body);
   try {
     const newIssue = await issue.save();
     res.status(201).json(newIssue);
-  } catch (err) {
-    res.status(400).json({ message: (err as Error).message });
+  } catch (err: any) {
+    if (err.code === 11000) {
+      console.error("Duplicate caseId error:", err);
+      res.status(400).json({ message: 'Duplicate caseId error.' });
+    } else {
+      console.error("Error in POST /api/issues:", err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 });
 
@@ -30,31 +37,34 @@ app.get('/api/issues', async (req: Request, res: Response) => {
     const issues = await Issue.find();
     res.json(issues);
   } catch (err) {
-    res.status(500).json({ message: (err as Error).message });
+    console.error("Error in GET /api/issues:", err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 app.delete('/api/issues/:id', async (req: Request, res: Response) => {
   try {
-    const result = await Issue.deleteOne({ _id: req.params.id });
-    if (result.deletedCount === 0) {
+    const result = await Issue.findByIdAndDelete(req.params.id);
+    if (!result) {
       return res.status(404).json({ message: 'Issue not found' });
     }
     res.json({ message: 'Issue deleted' });
   } catch (err) {
-    res.status(500).json({ message: (err as Error).message });
+    console.error("Error in DELETE /api/issues/:id:", err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 app.patch('/api/issues/:id', async (req: Request, res: Response) => {
   try {
-    const issue = await Issue.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!issue) {
+    const updatedIssue = await Issue.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedIssue) {
       return res.status(404).json({ message: 'Issue not found' });
     }
-    res.json(issue);
+    res.json(updatedIssue);
   } catch (err) {
-    res.status(400).json({ message: (err as Error).message });
+    console.error("Error in PATCH /api/issues/:id:", err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
@@ -62,11 +72,14 @@ app.use((req: Request, res: Response) => {
   res.status(404).send('Page not found');
 });
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.message);
-  res.status(500).send('Something broke!');
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error("Centralized error handler:", err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500).send('Internal Server Error');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

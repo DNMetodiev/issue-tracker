@@ -1,43 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { getIssues } from '../../services/issueService';
-import Table from '../Table/Table';
 import NavBar from '../NavBar/NavBar';
-import { Incident } from '../../models/interfaces';
+import Table from '../Table/Table';
+import { getIssues, createIssue } from '../../services/issueService';
+import { Issue } from '../../models/interfaces';
+import NewIssueForm from '../NewIssueForm/NewIssueForm';
+import Modal from '../Modal/Modal';
 
 const IssueList: React.FC = () => {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [showNewIssueModal, setShowNewIssueModal] = useState(false);
 
   useEffect(() => {
-    const fetchIncidents = async () => {
+    const fetchIssues = async () => {
       try {
-        const fetchedIncidents = await getIssues();
-        setIncidents(fetchedIncidents as Incident[]);
+        const fetchedIssues = await getIssues();
+        setIssues(fetchedIssues);
       } catch (error) {
-        console.error('Failed to fetch incidents:', error);
+        console.error('Failed to fetch issues:', error);
       }
     };
 
-    fetchIncidents();
+    fetchIssues();
   }, []);
 
-  const handleSearch = (query: string) => {
-    // TODO: Implement search functionality
-    console.log('Search query:', query);
+  const handleCreateNewIssue = async (newIssueData: Issue) => {
+    try {
+      const newIssue = await createIssue(newIssueData);
+      setIssues(prevIssues => [...prevIssues, newIssue]);
+      setShowNewIssueModal(false);
+    } catch (error) {
+      console.error('Error creating new issue:', error);
+    }
   };
-
-  const handleNewIssue = () => {
-    // TODO: Implement new issue functionality
-    console.log('Handle new issue');
-  };
-
-  const ongoingIncidents = incidents.filter((incident) => incident.status === 'Ongoing');
-  const historicalIncidents = incidents.filter((incident) => incident.status === 'Historical');
 
   return (
     <div className="issue-list-page">
-      <NavBar onSearch={handleSearch} onNewIssue={handleNewIssue} />
-      <Table incidents={ongoingIncidents} title="Ongoing Incidents" />
-      <Table incidents={historicalIncidents} title="Historical Incidents" />
+      <NavBar onSearch={() => { }} onNewIssueClick={() => setShowNewIssueModal(true)} />
+      <Modal show={showNewIssueModal} onClose={() => setShowNewIssueModal(false)}>
+        <NewIssueForm onCreate={handleCreateNewIssue} />
+      </Modal>
+      <Table issues={issues} title="Ongoing Issues" />
     </div>
   );
 };

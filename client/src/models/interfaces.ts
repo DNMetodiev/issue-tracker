@@ -1,5 +1,5 @@
 export interface Issue {
-  id: string;
+  id?: string;
   caseId: string;
   title: string;
   description: string;

@@ -15,14 +15,14 @@ function App() {
 
   const handleCreateNewIssue = (issue: Issue) => {
     console.log(issue);
-    toggleNewIssueModal();
+    setShowNewIssueModal(false);
   };
 
   const toggleNewIssueModal = () => setShowNewIssueModal(!showNewIssueModal);
 
   return (
     <Router>
-      <NavBar onNewIssueClick={toggleNewIssueModal} />
+      <NavBar onSearch={() => { }} onNewIssueClick={toggleNewIssueModal} />
       {showNewIssueModal && (
         <div className="modal-backdrop">
           <NewIssueForm onCreate={handleCreateNewIssue} />

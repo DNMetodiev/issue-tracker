@@ -7,9 +7,10 @@ export interface IIssue extends Document {
 }
 
 const issueSchema = new mongoose.Schema({
-  caseId: { type: String, required: true },
-  description: { type: String, required: true },
-  status: { type: String, required: true },
+  caseId: { type: String, required: true, unique: true },
+  title: { type: String, required: true },
+  description: String,
+  status: String,
 });
 
 const Issue = mongoose.model<IIssue>('Issue', issueSchema);
