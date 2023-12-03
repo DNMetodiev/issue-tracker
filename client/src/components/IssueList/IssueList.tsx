@@ -8,15 +8,19 @@ import Modal from '../Modal/Modal';
 
 const IssueList: React.FC = () => {
   const [issues, setIssues] = useState<Issue[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showNewIssueModal, setShowNewIssueModal] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const fetchIssues = async () => {
       try {
         const fetchedIssues = await getIssues();
         setIssues(fetchedIssues);
       } catch (error) {
         console.error('Failed to fetch issues:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -32,6 +36,10 @@ const IssueList: React.FC = () => {
       console.error('Error creating new issue:', error);
     }
   };
+
+  if (loading) {
+    return <div>Loading issues...</div>;
+  }
 
   return (
     <div className="issue-list-page">

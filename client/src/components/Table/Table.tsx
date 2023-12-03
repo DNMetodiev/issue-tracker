@@ -8,10 +8,14 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ issues, title }) => {
+  if (!issues.length) {
+    return <div>No {title} to display.</div>;
+  }
+
   return (
-    <div className="table-container">
+    <>
       <h2>{title}</h2>
-      <table className="table">
+      <table>
         <thead>
           <tr>
             <th>Case ID</th>
@@ -21,7 +25,7 @@ const Table: React.FC<TableProps> = ({ issues, title }) => {
           </tr>
         </thead>
         <tbody>
-          {issues.map((issue) => (
+          {issues.map(issue => (
             <tr key={issue.id}>
               <td>{issue.caseId}</td>
               <td>{issue.title}</td>
@@ -31,7 +35,7 @@ const Table: React.FC<TableProps> = ({ issues, title }) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </>
   );
 };
 

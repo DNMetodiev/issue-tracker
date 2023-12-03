@@ -32,10 +32,25 @@ app.post('/api/issues', async (req, res) => {
   }
 });
 
+
 app.get('/api/issues', async (req: Request, res: Response) => {
+  const { status, page = '1', limit = '5' } = req.query;
+  const pageNum = parseInt(page as string);
+  const limitNum = parseInt(limit as string);
+  const statusQuery = status === 'historical' ? 'Closed' : 'Open';
+
   try {
-    const issues = await Issue.find();
-    res.json(issues);
+    const totalItems = await Issue.countDocuments({ status: statusQuery });
+    const issues = await Issue.find({ status: statusQuery })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum)
+      .exec();
+
+    res.json({
+      issues,
+      totalPages: Math.ceil(totalItems / limitNum),
+      currentPage: pageNum
+    });
   } catch (err) {
     console.error("Error in GET /api/issues:", err);
     res.status(500).json({ message: 'Internal server error' });
