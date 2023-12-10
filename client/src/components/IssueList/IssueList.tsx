@@ -7,7 +7,8 @@ import NewIssueForm from '../NewIssueForm/NewIssueForm';
 import Modal from '../Modal/Modal';
 
 const IssueList: React.FC = () => {
-  const [issues, setIssues] = useState<Issue[]>([]);
+  const [ongoingIssues, setOngoingIssues] = useState<Issue[]>([]);
+  const [historicalIssues, setHistoricalIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewIssueModal, setShowNewIssueModal] = useState(false);
 
@@ -15,8 +16,10 @@ const IssueList: React.FC = () => {
     setLoading(true);
     const fetchIssues = async () => {
       try {
-        const fetchedIssues = await getIssues();
-        setIssues(fetchedIssues);
+        const ongoing = await getIssues('Open', 1, 5);
+        const historical = await getIssues('Closed', 1, 5);
+        setOngoingIssues(ongoing);
+        setHistoricalIssues(historical);
       } catch (error) {
         console.error('Failed to fetch issues:', error);
       } finally {
@@ -27,10 +30,10 @@ const IssueList: React.FC = () => {
     fetchIssues();
   }, []);
 
-  const handleCreateNewIssue = async (newIssueData: Issue) => {
+  const handleCreateNewIssue = async (newIssueData: Omit<Issue, 'id'>) => {
     try {
       const newIssue = await createIssue(newIssueData);
-      setIssues(prevIssues => [...prevIssues, newIssue]);
+      setOngoingIssues(prevIssues => [...prevIssues, newIssue]);
       setShowNewIssueModal(false);
     } catch (error) {
       console.error('Error creating new issue:', error);
@@ -47,7 +50,8 @@ const IssueList: React.FC = () => {
       <Modal show={showNewIssueModal} onClose={() => setShowNewIssueModal(false)}>
         <NewIssueForm onCreate={handleCreateNewIssue} />
       </Modal>
-      <Table issues={issues} title="Ongoing Issues" />
+      <Table issues={ongoingIssues} title="Ongoing Issues" />
+      <Table issues={historicalIssues} title="Historical Issues" />
     </div>
   );
 };
